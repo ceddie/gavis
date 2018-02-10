@@ -1,0 +1,4 @@
+.idea/
+__pycache__/
+vis/node_modules/
+vis/graph.js
