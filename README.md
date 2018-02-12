@@ -27,3 +27,7 @@ Vis has to be in the folder gavis/vis/node_modules/vis/
 cd gavis/vis
 npm install vis
 ```
+
+## Vis.js Options
+
+For more details on the options in the Options-Tab see http://visjs.org/docs/network/.
