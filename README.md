@@ -31,3 +31,10 @@ npm install vis
 ## Vis.js Options
 
 For more details on the options in the Options-Tab see http://visjs.org/docs/network/.
+
+## Resources
+
+## python-louvain
+
+As basis for my implementation of the Louvain algorithm I used https://github.com/taynaud/python-louvain.
+
