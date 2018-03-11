@@ -1,1 +1,4 @@
-simplejson
+networkit==4.4
+networkx==2.0
+simplejson==3.12.0
+PyQt5==5.10.1
