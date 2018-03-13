@@ -210,7 +210,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.init_graph_view(options)
         controller_cls_name = self.combo_box.currentText()
         self.gavis_graph = GavisGraph.from_nx_graph(self.nx_graph, self.proxy)
-        self.controller = self.controllers[controller_cls_name](self.gavis_graph, self.proxy)
+        self.info_display = self.findChild(QVBoxLayout, "info_display")
+        self.controller = self.controllers[controller_cls_name](self.gavis_graph, self.proxy, self.info_display)
         self.set_button_callbacks(self.controller.get_button_callbacks())
         self.tab_widget.setTabEnabled(1, True)
         self.findChild(QLabel, "controller_label").setText(controller_cls_name + ':')
@@ -241,7 +242,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.web_engine_view.page().runJavaScript(js, callback)
 
     def set_button_callbacks(self, button_callbacks):
-        if len(button_callbacks) > 12:
+        if len(button_callbacks) > 8:
             raise AssertionError('Not enough buttons!')
         for i in range(len(button_callbacks)):
             self.findChild(QPushButton, "pushButton_{}".format(i + 1)).setText(button_callbacks[i][0])

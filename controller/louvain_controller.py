@@ -1,22 +1,31 @@
 from __future__ import print_function
 import random
 from controller.colors import colors1
-from controller.louvain import optimize_locally, Status, _renumber, merge, _neighcom
+from controller.louvain import optimize_locally, Status, _renumber, merge, _neighcom, _modularity
 from graph.gavisgraph import GavisGraph
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 colors = colors1
 
 
 class LouvainController:
-    def __init__(self, gavis_graph, proxy):
+    def __init__(self, gavis_graph, proxy, info_display):
         self.gavis_graph = gavis_graph
         self.proxy = proxy
+        self.info_display = info_display
         self.nx_graph = self.gavis_graph.nx_graph
         self.original_nx_graph = self.nx_graph.copy()
         self.status = None
         self.partition = None
         self.self_loops = None
         self.after_merge = None
+
+        self.figure = plt.figure(figsize=(1, 2))
+        self.info_canvas = FigureCanvas(self.figure)
+        for i in reversed(range(self.info_display.count())):
+            self.info_display.itemAt(i).widget().setParent(None)
+        self.info_display.addWidget(self.info_canvas)
 
     def recolor(self, node2com, sync=True):
         for vertex_id, vertex in self.gavis_graph.vertices.items():
@@ -55,6 +64,16 @@ class LouvainController:
         self.recolor(self.status.node2com)
         self.self_loops = False
 
+        self.ax = self.figure.add_subplot(111)
+        self.values = list()
+        self.values.append(_modularity(self.status))
+        self.plot_info()
+
+    def plot_info(self):
+        self.ax.plot(list(range(len(self.values))), self.values, 'bx')
+        self.ax.set_ylim(-0.5, 1)
+        self.info_canvas.draw()
+
     def iteration(self):
         improved = False
         nodes_order = list(self.nx_graph.node.keys())
@@ -66,6 +85,8 @@ class LouvainController:
         self.recolor(_renumber(self.status.node2com), sync=False)
         self.after_merge = False
         self.relabel()
+        self.values.append(_modularity(self.status))
+        self.plot_info()
         print('Improved: {}'.format(str(improved)))
 
     def update_partition(self):
